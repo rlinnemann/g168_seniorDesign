@@ -4,10 +4,12 @@ This code reads from three sensors
 The distances are translated to keycommands
 
 
-if it reads q dont do q again
-set the distance in an function and check to see if its the same notw
+if it already printed a value, dont print the same one again
 
-button that stops typing
+
+WANT TO ADD
+-----------
+button that stops 
 reverb on and off button
 
 */
