@@ -1,6 +1,6 @@
 /*
 
-This code reads from three sensors
+This code reads from four sensors
 The distances are translated to keycommands
 
 
