@@ -341,7 +341,7 @@ void setup() {
   digitalWrite(SHT_LOX1, LOW);
   digitalWrite(SHT_LOX2, LOW);
   digitalWrite(SHT_LOX3, LOW);
-  digitalWrite(SHT_LOX4, LOW);
+  //digitalWrite(SHT_LOX4, LOW);
 
   Serial.println(F("All in reset mode...(pins are low)"));
 
