@@ -18,21 +18,24 @@ reverb on and off button
 #include "PluggableUSBHID.h"
 #include "USBKeyboard.h"
 
-// address we will assign if dual sensor is present
+// address we will assign if multiple sensors are present
 #define LOX1_ADDRESS 0x30
 #define LOX2_ADDRESS 0x31
 #define LOX3_ADDRESS 0x33
+//#define LOX4_ADDRESS0x34
 
 // set the pins to shutdown
-#define SHT_LOX1 2
-#define SHT_LOX2 3
-#define SHT_LOX3 1
+#define SHT_LOX1 1
+#define SHT_LOX2 2
+#define SHT_LOX3 3
+//#define SHT_LOX4 4
 
 
 // objects for the vl53l0x
 Adafruit_VL53L0X lox1 = Adafruit_VL53L0X();
 Adafruit_VL53L0X lox2 = Adafruit_VL53L0X();
 Adafruit_VL53L0X lox3 = Adafruit_VL53L0X();
+//Adafruit_VL53L0X lox4 = Adafruit_VL53L0X();
 
 
 USBKeyboard Keyboard;
@@ -41,11 +44,14 @@ USBKeyboard Keyboard;
 VL53L0X_RangingMeasurementData_t measure1;
 VL53L0X_RangingMeasurementData_t measure2;
 VL53L0X_RangingMeasurementData_t measure3;
+//VL53L0X_RangingMeasurementData_t measure4;
 
 
 int sensorState1;
 int sensorState2;
 int sensorState3;
+int sensorState4;
+
 /*
     Reset all sensors by setting all of their XSHUT pins low for delay(10), then set all XSHUT high to bring out of reset
     Keep sensor #1 awake by keeping XSHUT pin high
@@ -54,12 +60,14 @@ int sensorState3;
     Keep sensor #1 awake, and now bring sensor #2 out of reset by setting its XSHUT pin high.
     Initialize sensor #2 with lox.begin(new_i2c_address) Pick any number but 0x29 and whatever you set the first sensor to
 
-
+    CHECK THIS
+    ---------------------------------
     SDA => Pin 6 (GP4)
     SCL => Pin 7 (GP5)
     XSHUT1 => Pin 10 (GP7)
     XSHUT2 => Pin 9 (GP6)
     XSHUT3 => Pin 12 (GP9)
+    
 
 
  */
@@ -68,17 +76,20 @@ void setID() {
   digitalWrite(SHT_LOX1, LOW);
   digitalWrite(SHT_LOX2, LOW);
   digitalWrite(SHT_LOX3, LOW);
+  //digitalWrite(SHT_LOX4, LOW);
   delay(10);
   // all unreset
   digitalWrite(SHT_LOX1, HIGH);
   digitalWrite(SHT_LOX2, HIGH);
   digitalWrite(SHT_LOX3, HIGH);
+  //digitalWrite(SHT_LOX4, HIGH);
   delay(10);
 
   // activating LOX1 and resetting LOX2
   digitalWrite(SHT_LOX1, HIGH);
   digitalWrite(SHT_LOX2, LOW);
   digitalWrite(SHT_LOX3, LOW);
+  //digitalWrite(SHT_LOX4, LOW);
 
   // initing LOX1
   if(!lox1.begin(LOX1_ADDRESS)) {
@@ -103,17 +114,29 @@ void setID() {
   delay(10);
 
   //initing LOX3
-  if(!lox2.begin(LOX3_ADDRESS)) {
+  if(!lox3.begin(LOX3_ADDRESS)) {
     Serial.println(F("Failed to boot third VL53L0X"));
     while(1);
   }
+   /* 
+  // activating LOX4
+  digitalWrite(SHT_LOX4, HIGH);
+  delay(10);
+
+  //initing LOX4
+  if(!lox4.begin(LOX4_ADDRESS)) {
+    Serial.println(F("Failed to boot second VL53L0X"));
+    while(1);
+  }
+  */
 }
 
 void read_dual_sensors() {
 
   lox1.rangingTest(&measure1, false); // pass in 'true' to get debug data printout!
   lox2.rangingTest(&measure2, false); // pass in 'true' to get debug data printout!
-  lox2.rangingTest(&measure3, false); // pass in 'true' to get debug data printout!
+  lox3.rangingTest(&measure3, false); // pass in 'true' to get debug data printout!
+  lox4.rangingTest(&measure4, false); // pass in 'true' to get debug data printout!
   // print sensor one reading
   Serial.print(F("1: "));
   if(measure1.RangeStatus != 4) {     // if not out of range
@@ -253,22 +276,72 @@ void read_dual_sensors() {
   } else {
     Serial.print(F("Out of range"));
   }
+  /*  
+  Serial.print(F(" "));
+
+  Serial.print(F("4: "));
+  if(measure4.RangeStatus != 4) {
+    Serial.print(measure4.RangeMilliMeter);
+    Serial.print("\n");
+    if(measure4.RangeMilliMeter < 100){
+      if(sensorState4 == 1){
+        //Do Nothing
+      }
+      else{
+        Keyboard.printf("ooooooooooo");
+        sensorState4 = 1;
+      }
+    }
+    else if(measure4.RangeMilliMeter > 100 && measure4.RangeMilliMeter  < 200){
+      if(sensorState4 == 2){
+        //Do Nothing
+      }
+      else{
+        Keyboard.printf("ppppppppppp");
+        sensorState4 = 2;
+      }
+    }
+    else if(measure4.RangeMilliMeter > 200 && measure4.RangeMilliMeter  < 300){
+      if(sensorState4 == 3){
+        //Do Nothing
+      }
+      else{
+        Keyboard.printf("zzzzzzzzzzz");
+        sensorState4 = 3;
+      }
+    }
+    else if(measure4.RangeMilliMeter > 300 && measure4.RangeMilliMeter  < 400){
+      if(sensorState4 == 4){
+        //Do Nothing
+      }
+      else{
+        Keyboard.printf("xxxxxxxxxxx");
+        sensorState4 = 4;
+      }
+    }
+  } else {
+    Serial.print(F("Out of range"));
+  }
+  */
 }
+
 void setup() {
   Serial.begin(115200);
 
-  // wait until serial port opens for native USB devices
+  // wait until serial port opens for native USB devices (MAKES YOU NEED PUTTY)
   while (! Serial) { delay(1); }
 
   pinMode(SHT_LOX1, OUTPUT);
   pinMode(SHT_LOX2, OUTPUT);
   pinMode(SHT_LOX3, OUTPUT);
+  //pinMode(SHT_LOX4, OUTPUT);
 
   Serial.println(F("Shutdown pins inited..."));
 
   digitalWrite(SHT_LOX1, LOW);
   digitalWrite(SHT_LOX2, LOW);
   digitalWrite(SHT_LOX3, LOW);
+  digitalWrite(SHT_LOX4, LOW);
 
   Serial.println(F("All in reset mode...(pins are low)"));
 
