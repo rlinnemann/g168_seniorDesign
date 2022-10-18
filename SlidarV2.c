@@ -64,13 +64,12 @@ int sensorState4;
     ---------------------------------
     SDA => Pin 6 (GP4)
     SCL => Pin 7 (GP5)
-    XSHUT1 => Pin 10 (GP7)
-    XSHUT2 => Pin 9 (GP6)
-    XSHUT3 => Pin 12 (GP9)
-    
+    XSHUT1 => Pin 2 (GP1)
+    XSHUT2 => Pin 4 (GP2)
+    XSHUT3 => Pin 5 (GP3)
+    XSHUT4 => Pin 6 (GP4)
+*/
 
-
- */
 void setID() {
   // all reset
   digitalWrite(SHT_LOX1, LOW);
