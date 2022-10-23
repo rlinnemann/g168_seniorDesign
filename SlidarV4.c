@@ -67,7 +67,7 @@ void setID() {
   digitalWrite(SHT_LOX1, LOW);
   digitalWrite(SHT_LOX2, LOW);
   digitalWrite(SHT_LOX3, LOW);
-  //digitalWrite(SHT_LOX4, LOW);
+  digitalWrite(SHT_LOX4, LOW);
   delay(10);
     
   // all unreset
