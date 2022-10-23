@@ -19,10 +19,10 @@ reverb on and off button
 #define LOX4_ADDRESS 0x34
 
 // set the pins to shutdown
-#define SHT_LOX1 0
-#define SHT_LOX2 1
-#define SHT_LOX3 2
-#define SHT_LOX4 3
+#define SHT_LOX1 1
+#define SHT_LOX2 2
+#define SHT_LOX3 3
+#define SHT_LOX4 0
 
 
 // objects for the vl53l0x
